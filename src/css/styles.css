@@ -1,0 +1,72 @@
+@import '/node_modules/open-props/open-props.min.css';
+@import '/node_modules/open-props/normalize.min.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: var(--size-7);
+  align-items: center;
+  width: min(100% - var(--size-7), var(--size-content-3));
+  margin-inline: auto;
+}
+
+header h1 {
+  margin-block-start: var(--size-7);
+  text-align: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: var(--size-7);
+}
+
+#search {
+  width: 100%;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--size-2);
+  font-size: var(--font-size-3);
+  position: relative;
+  width: 100%;
+}
+
+.search-form .search-form__inputs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--size-1);
+  width: 100%;
+}
+
+.search-form .search-form__inputs input {
+  padding: var(--size-2);
+  width: 100%;
+}
+.search-button {
+  position: absolute;
+  background: none;
+  cursor: pointer;
+  bottom: var(--size-2);
+  right: var(--size-2);
+}
