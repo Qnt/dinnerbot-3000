@@ -113,3 +113,13 @@ main section {
 .hidden {
   display: none;
 }
+
+footer {
+  margin-block-start: auto;
+  margin-block-end: var(--size-2);
+  padding-block-start: var(--size-4);
+}
+
+footer p {
+  font-size: var(--font-size-1);
+}
