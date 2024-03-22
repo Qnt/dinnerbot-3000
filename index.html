@@ -11,7 +11,7 @@
       <h1>DinnerBot 3000</h1>
     </header>
     <main>
-      <section id="search">
+      <section id="search-section">
         <form class="search-form">
           <div class="search-form__inputs">
             <label for="search-input">Enter an ingredient</label>
@@ -20,23 +20,15 @@
           <button type="submit" class="search-button">🔎</button>
         </form>
       </section>
-      <section id="meals">
-        <h2>Found <span class="recipe-count"></span> recipe(s)</h2>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris velit
-          velit, viverra vel nunc a, convallis tristique lorem. Ut cursus
-          lacinia eros, ac auctor enim molestie et. Aliquam sit amet malesuada
-          eros. Orci varius natoque penatibus et magnis dis parturient montes,
-          nascetur ridiculus mus. Nunc euismod mattis consequat. Etiam aliquet
-          molestie risus, eget aliquam nisi. Sed auctor mi est. Donec pharetra
-          feugiat ante, vel lacinia leo pretium sit amet. Aenean ac suscipit
-          orci. Fusce arcu est, accumsan ut malesuada nec, ultrices non metus.
-          Suspendisse vel commodo leo. Praesent vulputate, arcu sed porttitor
-          suscipit, lorem lectus porta tellus, in condimentum odio leo quis
-          erat. Cras at massa gravida, posuere augue sit amet, ultrices nisi.
-          Mauris in semper leo. Etiam eu sodales tellus, sed molestie augue.
-        </p>
-        <ul></ul>
+      <section id="recipe-section">
+        <h3><span class="recipe-count"></span></h3>
+        <div class="meal-card">
+          <h4 class="meal-title">Teriyaki Chicken Casserole</h4>
+          <img src="" alt="meal picture" class="meal-image" />
+          <ul class="meal-ingredient"></ul>
+          <p class="meal-instruction"></p>
+          <video src="" class="meal-video"></video>
+        </div>
       </section>
     </main>
     <footer></footer>

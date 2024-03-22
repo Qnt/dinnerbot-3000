@@ -1,5 +1,8 @@
-@import '/node_modules/open-props/open-props.min.css';
-@import '/node_modules/open-props/normalize.min.css';
+/* @import '/node_modules/open-props/open-props.min.css';
+@import '/node_modules/open-props/normalize.min.css'; */
+
+@import 'https://unpkg.com/open-props';
+@import 'https://unpkg.com/open-props/normalize.min.css';
 
 *,
 *::before,
@@ -33,9 +36,10 @@ main {
   justify-content: start;
   align-items: center;
   gap: var(--size-7);
+  width: 100%;
 }
 
-#search {
+main section {
   width: 100%;
 }
 
@@ -47,7 +51,7 @@ main {
   gap: var(--size-2);
   font-size: var(--font-size-3);
   position: relative;
-  width: 100%;
+  margin-inline: var(--size-7);
 }
 
 .search-form .search-form__inputs {
@@ -69,4 +73,10 @@ main {
   cursor: pointer;
   bottom: var(--size-2);
   right: var(--size-2);
+}
+
+.meal-card {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid hotpink;
 }
