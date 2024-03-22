@@ -19,14 +19,12 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: start;
-  gap: var(--size-7);
   align-items: center;
   width: min(100% - var(--size-7), var(--size-content-3));
   margin-inline: auto;
 }
 
 header h1 {
-  margin-block-start: var(--size-7);
   text-align: center;
 }
 
@@ -75,8 +73,46 @@ main section {
   right: var(--size-2);
 }
 
+.recipe-count {
+  text-align: center;
+  margin-block-end: var(--size-4);
+}
+
 .meal-card {
   display: flex;
   flex-direction: column;
-  border: 2px solid hotpink;
+  gap: var(--size-3);
+  background: var(--surface-2);
+  padding: var(--size-3);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-4);
+}
+
+.meal-image {
+  border-radius: var(--radius-2);
+  box-shadow: var(--shadow-2);
+}
+
+.meal-ingredients {
+  width: 100%;
+  background: var(--surface-3);
+  border: 1px solid var(--surface-3);
+  border-radius: var(--radius-2);
+  --nice-inner-radius: calc(var(--radius-2) - 2px);
+}
+
+.meal-ingredients th {
+  background: var(--surface-3);
+}
+
+.meal-ingredients td {
+  background: var(--surface-2);
+}
+
+.meal-video {
+  aspect-ratio: var(--ratio-widescreen);
+}
+
+.hidden {
+  display: none;
 }
