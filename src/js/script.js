@@ -1,4 +1,4 @@
-async function getMeals(searchIngredient) {
+async function fetchMeals(searchIngredient) {
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchIngredient}`
   );
@@ -27,78 +27,154 @@ async function getMeals(searchIngredient) {
   return mealsDetailed;
 }
 
-const searchInputEl = document.getElementById('search-input');
-const searchButtonEl = document.querySelector('.search-button');
-const recipeCountEl = document.querySelector('.recipe-count');
-const mealCardEl = document.querySelector('.meal-card');
-const mealTitleEl = document.querySelector('.meal-title');
-const mealImageEl = document.querySelector('.meal-image');
-const mealIngredientEl = document.querySelector('.meal-ingredients');
-const mealIngredientTbodyEl = mealIngredientEl.getElementsByTagName('tbody')[0];
-const mealInstructionsEl = document.querySelector('.meal-instructions');
-const mealVideoEl = document.querySelector('.meal-video');
-
-function showRecipeCount(meals) {
-  let recipeCountText;
-  if (!meals) {
-    recipeCountText = 'No recipes found ☹️';
-  } else if (meals.length === 1) {
-    recipeCountText = `Found ${meals.length} recipe`;
-  } else {
-    recipeCountText = `Found ${meals.length} recipes`;
+const MealsStore = class extends EventTarget {
+  constructor(localStorageKey) {
+    super();
+    this.localStorageKey = localStorageKey;
+    this._readStorage();
+    this.all = () => this.meals;
   }
-  recipeCountEl.textContent = recipeCountText;
-}
-
-function showMealCard(meals) {
-  mealCardEl.classList.remove('hidden');
-  mealTitleEl.textContent = meals[0].strMeal;
-  mealImageEl.setAttribute('src', meals[0].strMealThumb);
-  mealInstructionsEl.textContent = meals[0].strInstructions;
-  const videoParams = new URL(meals[0].strYoutube).searchParams;
-  const videoId = videoParams.get('v');
-  mealVideoEl.setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
-  const ingredients = extractIngredients(meals[0]);
-  fillIngredientTable(ingredients);
-}
-
-function extractIngredients(meal) {
-  const ingredients = [];
-
-  for (let key in meal) {
-    if (key.includes('strIngredient') && meal[key]) {
-      let ingredientNum = key.match(/\d+/)[0];
-      let strIngredient = meal[key];
-      let strMeasure = meal[`strMeasure${ingredientNum}`];
-      ingredients.push({ strIngredient, strMeasure });
-    }
+  _readStorage() {
+    this.meals = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
   }
+  _save() {
+    localStorage.setItem(this.localStorageKey, JSON.stringify(this.meals));
+    this.dispatchEvent(new CustomEvent('save'));
+  }
+  deleteAll() {
+    this.meals = [];
+    this._save();
+  }
+  update(meals) {
+    this.meals = meals;
+    this._save();
+  }
+};
 
-  return ingredients;
-}
+const Meals = new MealsStore('dinnerbot-3000-meals');
 
-function fillIngredientTable(ingredients) {
-  ingredients.forEach((ingredient, index) => {
+const App = {
+  $: {
+    searchInputEl: document.getElementById('search-input'),
+    searchButtonEl: document.querySelector('.search-button'),
+    recipeCountEl: document.querySelector('.recipe-count'),
+    mealListEl: document.querySelector('.meals'),
+
+    showRecipeCount(count) {
+      let recipeCountText;
+      if (!count) {
+        recipeCountText = 'No recipes found ☹️';
+      } else if (count === 1) {
+        recipeCountText = `Found ${count} recipe`;
+      } else {
+        recipeCountText = `Found ${count} recipes`;
+      }
+      App.$.recipeCountEl.textContent = recipeCountText;
+    },
+
+    showMealList(meal) {
+      App.$.mealListEl.classList.remove('hidden');
+    },
+  },
+  init() {
+    Meals.addEventListener('save', App.render);
+    App.$.searchButtonEl.addEventListener('click', async event => {
+      event.preventDefault();
+      const searchValue = App.$.searchInputEl.value;
+
+      if (!searchValue) {
+        console.log('Enter valid value');
+        return;
+      }
+      const rawMeals = await fetchMeals(App.$.searchInputEl.value);
+      const mealsAdapted = resToWantedAdapter(rawMeals);
+
+      Meals.update(mealsAdapted);
+    });
+  },
+  createIngredient(ingredient) {
     const trEl = document.createElement('tr');
     const ingredientTdEl = document.createElement('td');
     const measureTdEl = document.createElement('td');
     ingredientTdEl.textContent = ingredient.strIngredient;
     measureTdEl.textContent = ingredient.strMeasure;
     trEl.append(ingredientTdEl, measureTdEl);
-    mealIngredientTbodyEl.appendChild(trEl);
+    return trEl;
+  },
+  createMealEl(meal) {
+    const liEl = document.createElement('li');
+    liEl.dataset.id = meal.idMeal;
+
+    insertHTML(
+      liEl,
+      `
+      <div class="meal-card">
+        <h4 class="meal-title"></h4>
+        <img src="" alt="meal picture" class="meal-image" />
+        <table class="meal-ingredients">
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Measure</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p class="meal-instructions"></p>
+        <iframe
+          class="meal-video"
+          src=""
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+		  `
+    );
+    const tbodyEl = liEl.getElementsByTagName('tbody')[0];
+    tbodyEl.append(
+      ...meal.ingredients.map(ingredient => App.createIngredient(ingredient))
+    );
+    liEl.querySelector('.meal-title').textContent = meal.strMeal;
+    liEl.querySelector('.meal-image').setAttribute('src', meal.strMealThumb);
+    liEl.querySelector('.meal-ingredients');
+    liEl.querySelector('.meal-instructions').textContent = meal.strInstructions;
+
+    const videoParams = new URL(meal.strYoutube).searchParams;
+    const videoId = videoParams.get('v');
+    liEl
+      .querySelector('.meal-video')
+      .setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
+
+    return liEl;
+  },
+  render() {
+    const count = Meals.all().length;
+    App.$.showRecipeCount(count);
+    App.$.showMealList();
+    App.$.mealListEl.replaceChildren(
+      ...Meals.all().map(meal => App.createMealEl(meal))
+    );
+  },
+};
+
+function resToWantedAdapter(meals) {
+  return meals.map(meal => {
+    const ingredients = [];
+
+    for (let key in meal) {
+      if (key.includes('strIngredient') && meal[key]) {
+        let ingredientNum = key.match(/\d+/)[0];
+        let strIngredient = meal[key];
+        let strMeasure = meal[`strMeasure${ingredientNum}`];
+        ingredients.push({ strIngredient, strMeasure });
+      }
+    }
+
+    return { ...meal, ingredients };
   });
 }
 
-searchButtonEl.addEventListener('click', async event => {
-  event.preventDefault();
-  const searchValue = searchInputEl.value;
+const insertHTML = (el, html) => el.insertAdjacentHTML('afterbegin', html);
 
-  if (!searchValue) {
-    console.log('Enter valid value');
-    return;
-  }
-  const meals = await getMeals(searchInputEl.value);
-  console.log(meals);
-  showRecipeCount(meals);
-  showMealCard(meals);
-});
+App.init();
