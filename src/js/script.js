@@ -69,6 +69,7 @@ const App = {
       } else {
         recipeCountText = `Found ${count} recipes`;
       }
+      App.$.recipeCountEl.classList.remove('hidden');
       App.$.recipeCountEl.textContent = recipeCountText;
     },
 
@@ -91,6 +92,7 @@ const App = {
 
       Meals.update(mealsAdapted);
     });
+    App.render();
   },
   createIngredient(ingredient) {
     const trEl = document.createElement('tr');
