@@ -74,14 +74,15 @@ main section {
   right: var(--size-2);
 }
 
-.recipe-count {
+.meal-count {
   text-align: center;
-  margin-block-end: var(--size-4);
+  margin-block-end: var(--size-2);
 }
 
 .meals {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--size-4);
 }
 

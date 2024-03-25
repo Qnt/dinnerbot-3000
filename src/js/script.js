@@ -57,20 +57,20 @@ const App = {
   $: {
     searchInputEl: document.getElementById('search-input'),
     searchButtonEl: document.querySelector('.search-button'),
-    recipeCountEl: document.querySelector('.recipe-count'),
+    mealCountEl: document.querySelector('.meal-count'),
     mealListEl: document.querySelector('.meals'),
 
-    showRecipeCount(count) {
-      let recipeCountText;
+    showMealCount(count) {
+      let countText;
       if (!count) {
-        recipeCountText = 'No recipes found ☹️';
+        countText = 'No meals found ☹️';
       } else if (count === 1) {
-        recipeCountText = `Found ${count} recipe`;
+        countText = `Found ${count} meal`;
       } else {
-        recipeCountText = `Found ${count} recipes`;
+        countText = `Found ${count} meals`;
       }
-      App.$.recipeCountEl.classList.remove('hidden');
-      App.$.recipeCountEl.textContent = recipeCountText;
+      App.$.mealCountEl.classList.remove('hidden');
+      App.$.mealCountEl.textContent = countText;
     },
 
     showMealList(meal) {
@@ -142,17 +142,22 @@ const App = {
     liEl.querySelector('.meal-ingredients');
     liEl.querySelector('.meal-instructions').textContent = meal.strInstructions;
 
-    const videoParams = new URL(meal.strYoutube).searchParams;
-    const videoId = videoParams.get('v');
-    liEl
-      .querySelector('.meal-video')
-      .setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
+    try {
+      const videoParams = new URL(meal.strYoutube).searchParams;
+      const videoId = videoParams.get('v');
+      liEl
+        .querySelector('.meal-video')
+        .setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
+    } catch (err) {
+      console.log('Error', err.message);
+      liEl.querySelector('.meal-video').remove();
+    }
 
     return liEl;
   },
   render() {
     const count = Meals.all().length;
-    App.$.showRecipeCount(count);
+    App.$.showMealCount(count);
     App.$.showMealList();
     App.$.mealListEl.replaceChildren(
       ...Meals.all().map(meal => App.createMealEl(meal))
