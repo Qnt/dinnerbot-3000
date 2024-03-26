@@ -120,6 +120,7 @@ main {
   background: var(--surface-3);
   border: 1px solid var(--surface-3);
   border-radius: var(--radius-2);
+  --nice-inner-radius: calc(var(--radius-2) - 2px);
 }
 
 .meal-ingredients th {
