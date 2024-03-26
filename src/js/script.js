@@ -17,16 +17,24 @@ async function fetchMeals(searchIngredient) {
 
     const mealsDetailed = await Promise.all(
       mealsShort.meals.map(async meal => {
-        const res = await fetch(
-          `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
-        );
+        try {
+          const res = await fetch(
+            `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
+          );
 
-        if (!res.ok) {
-          throw new Error('Failed to fetch meal details');
+          if (!res.ok) {
+            throw new Error('F  ailed to fetch meal details');
+          }
+
+          const mealDetailed = await res.json();
+          return mealDetailed.meals[0];
+        } catch (error) {
+          console.error(
+            `An error occurred while fetching meal details for ${meal.idMeal}:`,
+            error.message
+          );
+          return null;
         }
-
-        const mealDetailed = await res.json();
-        return mealDetailed.meals[0];
       })
     );
 
