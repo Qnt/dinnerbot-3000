@@ -1,30 +1,40 @@
 async function fetchMeals(searchIngredient) {
-  const res = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchIngredient}`
-  );
-  if (!res.ok) {
-    console.log('oops');
-    return;
-    //TODO propper error handling
+  try {
+    const res = await fetch(
+      `https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchIngredient}`
+    );
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch meals');
+    }
+
+    const mealsShort = await res.json();
+
+    if (!mealsShort.meals) {
+      console.log('No meals found for the specified ingredient');
+      return [];
+    }
+
+    const mealsDetailed = await Promise.all(
+      mealsShort.meals.map(async meal => {
+        const res = await fetch(
+          `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
+        );
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch meal details');
+        }
+
+        const mealDetailed = await res.json();
+        return mealDetailed.meals[0];
+      })
+    );
+
+    return mealsDetailed;
+  } catch (error) {
+    console.error('An error occurred:', error.message);
+    return [];
   }
-  const mealsShort = await res.json();
-
-  const mealsDetailed = await Promise.all(
-    mealsShort.meals.map(async meal => {
-      const res = await fetch(
-        `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
-      );
-      if (!res.ok) {
-        console.log('oops');
-        return;
-        //TODO propper error handling
-      }
-      const mealDetailed = await res.json();
-      return mealDetailed.meals[0];
-    })
-  );
-
-  return mealsDetailed;
 }
 
 const MealsStore = class extends EventTarget {

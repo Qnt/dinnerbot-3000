@@ -73,6 +73,7 @@ main {
 
 .meal-count {
   margin-inline: auto;
+  text-align: center;
   margin-block-end: var(--size-2);
 }
 
