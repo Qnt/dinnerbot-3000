@@ -63,11 +63,11 @@ const App = {
     showMealCount(count) {
       let countText;
       if (!count) {
-        countText = 'No meals found ☹️';
+        countText = 'No recipe found ☹️';
       } else if (count === 1) {
-        countText = `Found ${count} meal`;
+        countText = `Found ${count} recipe`;
       } else {
-        countText = `Found ${count} meals`;
+        countText = `Found ${count} recipes`;
       }
       App.$.mealCountEl.classList.remove('hidden');
       App.$.mealCountEl.textContent = countText;
@@ -112,24 +112,30 @@ const App = {
       `
       <div class="meal-card">
         <h4 class="meal-title"></h4>
-        <img src="" alt="meal picture" class="meal-image" />
-        <table class="meal-ingredients">
-          <thead>
-            <tr>
-              <th>Ingredient</th>
-              <th>Measure</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <p class="meal-instructions"></p>
-        <iframe
-          class="meal-video"
-          src=""
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
+        <div class="meal-body">
+          <div class="meal-media-container ">
+            <img src="" alt="meal picture" class="meal-image" />
+            <iframe
+            class="meal-video"
+            src=""
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            ></iframe>
+          </div>
+          <div class="meal-text-container">
+            <table class="meal-ingredients">
+              <thead>
+                <tr>
+                  <th>Ingredient</th>
+                  <th>Measure</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p class="meal-instructions"></p>
+          </div>
+        </div>
       </div>
 		  `
     );
