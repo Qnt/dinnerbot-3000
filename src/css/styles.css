@@ -22,8 +22,13 @@ ul {
   list-style: none;
 }
 
+header {
+  margin-block: var(--size-7);
+}
+
 header h1 {
   text-align: center;
+  font-family: 'Workbench', sans-serif;
 }
 
 main {
